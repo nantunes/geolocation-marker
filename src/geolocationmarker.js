@@ -46,7 +46,7 @@ var GeolocationMarker = function (opt_map, opt_markerOpts, opt_circleOpts) {
         'anchor': new google.maps.Point(8, 8)
     },
     // This marker may move frequently - don't force canvas tile redraw
-    'optimized': false, 
+    'optimized': false,
     'position': new google.maps.LatLng(0, 0),
     'title': 'Current location',
     'zIndex': 2
@@ -78,9 +78,9 @@ var GeolocationMarker = function (opt_map, opt_markerOpts, opt_circleOpts) {
   google.maps.MVCObject.prototype.set.call(this, 'position', null);
   google.maps.MVCObject.prototype.set.call(this, 'map', null);
 
-  
+
   this.set('minimum_accuracy', null);
-  
+
   this.set('position_options', /** GeolocationPositionOptions */
       ({enableHighAccuracy: true, maximumAge: 1000}));
 
@@ -195,16 +195,18 @@ GeolocationMarker.Init = function() {
   /** @param {google.maps.Map|null} map */
   GeolocationMarker.prototype.setMap = function (map) {
     google.maps.MVCObject.prototype.set.call(this, 'map', map);
+
     if (map) {
-      this.watchPosition_();
+      this.startWatch();
     } else {
+      this.stopWatch();
+
       this.marker_.unbind('position');
       this.circle_.unbind('center');
       this.circle_.unbind('radius');
       google.maps.MVCObject.prototype.set.call(this, 'accuracy', null);
       google.maps.MVCObject.prototype.set.call(this, 'position', null);
-      navigator.geolocation.clearWatch(this.watchId_);
-      this.watchId_ = -1;
+
       this.marker_.setMap(map);
     }
   };
@@ -248,13 +250,19 @@ GeolocationMarker.Init = function() {
         !this.getPosition().equals(newPosition)) {
       // The local set method does not allow position to be updated
       google.maps.MVCObject.prototype.set.call(this, 'position', newPosition);
+
+      google.maps.event.trigger(this, 'geolocation_position', newPosition);
     }
   };
 
-  /**
-   * @private
-   */
-  GeolocationMarker.prototype.watchPosition_ = function () {
+  GeolocationMarker.prototype.stopWatch = function () {
+    if (navigator.geolocation) {
+      navigator.geolocation.clearWatch(this.watchId_);
+      this.watchId_ = -1;
+    }
+  };
+
+  GeolocationMarker.prototype.startWatch = function () {
     if (navigator.geolocation) {
       this.watchId_ = navigator.geolocation.watchPosition(
           goog.bind(this.updatePosition_, this),
