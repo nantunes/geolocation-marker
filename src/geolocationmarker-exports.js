@@ -20,7 +20,7 @@
  * @fileoverview
  * Exports for compiling the GeolocationMarker library with Closure-compiler
  * for use in external code. When compiling the library with other user
- * scripts, these exports are not needed. 
+ * scripts, these exports are not needed.
  */
 
 goog.require('GeolocationMarker');
@@ -30,7 +30,7 @@ GeolocationMarker.exports = function() {
     GeolocationMarker.Init();
 
     goog.exportSymbol('GeolocationMarker', GeolocationMarker);
-    
+
     goog.exportSymbol('GeolocationMarker.prototype.getAccuracy',
         GeolocationMarker.prototype.getAccuracy);
     goog.exportSymbol('GeolocationMarker.prototype.getBounds',
@@ -53,5 +53,9 @@ GeolocationMarker.exports = function() {
         GeolocationMarker.prototype.setMinimumAccuracy);
     goog.exportSymbol('GeolocationMarker.prototype.setPositionOptions',
         GeolocationMarker.prototype.setPositionOptions);
+    goog.exportSymbol('GeolocationMarker.prototype.stopWatch',
+        GeolocationMarker.prototype.stopWatch);
+    goog.exportSymbol('GeolocationMarker.prototype.startWatch',
+        GeolocationMarker.prototype.startWatch);
 };
 GeolocationMarker.exports();
